@@ -48,7 +48,7 @@ app.use('/userCreate/blog/create', authenticate, (req, res, next) => {
 app.use('/userView/blog/view/:id', authenticate, (req, res, next) => {
     next(); // Let the proxy middleware handle it
 }, proxy(`http://44.204.3.3:${process.env.VIEW_BLOG_PORT}`, {
-    proxyReqPathResolver: (req) => '/blog/view/:id',
+    proxyReqPathResolver: (req) => `/blog/view/${req.params.id}`,
     userResDecorator: (proxyRes, proxyResData) => {
         return proxyResData;
     }
@@ -58,7 +58,7 @@ app.use('/userView/blog/view/:id', authenticate, (req, res, next) => {
 app.use('/adminUpdate/blog/update/:id', authenticate, authRole('admin'), (req, res, next) => {
     next(); // Let the proxy middleware handle it
 }, proxy(`http://34.228.81.33:${process.env.UPDATE_BLOG_PORT}`, {
-    proxyReqPathResolver: (req) => '/blog/update/:id',
+    proxyReqPathResolver: (req) => `/blog/update/${req.params.id}`,
     userResDecorator: (proxyRes, proxyResData) => {
         return proxyResData;
     }
@@ -67,11 +67,12 @@ app.use('/adminUpdate/blog/update/:id', authenticate, authRole('admin'), (req, r
 app.use('/adminDelete/blog/admin/delete/:id', authenticate, authRole('admin'), (req, res, next) => {
     next(); // Let the proxy middleware handle it
 }, proxy(`http://34.228.81.33:${process.env.DELETE_BLOG_PORT}`, {
-    proxyReqPathResolver: (req) => '/blog/admin/delete/:id',
+    proxyReqPathResolver: (req) => `/blog/admin/delete/${req.params.id}`, // ✅ Correctly pass ID
     userResDecorator: (proxyRes, proxyResData) => {
         return proxyResData;
     }
 }));
+
 
 
 app.use('/adminView/blog/admin/all', authenticate, authRole('admin'), (req, res, next) => {
